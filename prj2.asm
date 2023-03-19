@@ -204,7 +204,6 @@ addi $sp, $sp, 8
 jr $ra
 
 
-# a0 is s0 a1 is s1, s0 is A, count = 32?? put that in s1, Q-1 is s2 equal to 0
 #v0 is high register and v1 is low register 
 
 booths:
@@ -213,31 +212,31 @@ addi $sp, $sp, -4
 sw $ra, 0($sp)
 
 #set up s0, s1
-add $s0, $zero, $zero #A is equal to zero
-addi $s1, $zero, 32 #count is equal to 32?
+add $s0, $zero, $zero #A zero
+addi $s1, $zero, 32 #count is 32
 add $s2, $zero, $zero #q-1 is 0
 
-#check last bit of q plus q-1
-#get last bit of q
+#check (q plus q-1)s last bit
+#get qs last bit
 loop:
-and $t0, $a1, 1 #put last bit of q in t0
-sll $t0, $t0, 1 #shift q by one
-add $t0, $t0, $s2 #t0 is the value of q0, q-1
+and $t0, $a1, 1 #t0 is last bit
+sll $t0, $t0, 1 #shifting q by one
+add $t0, $t0, $s2 #t0 is tq0 val, q-1
 beq $t0, 2, minusM
 beq $t0, 1, addM
 aritShift:
 #arithm. shift right code, carryout is t1
 
-#a register, perserve last bit of a and check first bit of a1
-and $t1, $s0, 1 #first bit of A
-and $t2, $s0, 2147483648 #t2 is the last bit of A
-srl $t2, $t2, 31 #shift last bit of A to first bit of t2
+#a reg, perserve as last bit and check a1s first bit 
+and $t1, $s0, 1 #A first bit
+and $t2, $s0, 2147483648 #t2 is As last bit
+srl $t2, $t2, 31 #shift As last bit to t2s first bit
 beq $t2, 1, oneShift
-srl $s0, $s0, 1 #A is shifted one bit and the new bit is zero
+srl $s0, $s0, 1 #A shifted one bit, new bit is zero
 #done shifting A
 shiftQ:
 #first step shift Q
-and $s2, $a1, 1 #put last bit of q in q-1
+and $s2, $a1, 1 #qs last bit into q-1
 srl $a1, $a1, 1 #shift Q by one 
 beq $t1, 1, shiftOne
 
@@ -246,61 +245,61 @@ beq $t1, 1, shiftOne
 addi $sp, $sp, -4
 sw $a0, 0($sp) #protect stack and store a0
 
-la $a0, spaceString #load string in a0
-addi $v0, $zero, 4 #syscall for print string
+la $a0, spaceString #load in spaceString
+addi $v0, $zero, 4 
 syscall
 
-add $a0, $s0, $zero #put A in arugment
+add $a0, $s0, $zero #put A in arg
 jal printBits #call printBits
 
-add $a0, $a1, $zero #put Q in arugment
-jal printBits #call printBits
+add $a0, $a1, $zero #put Q in arg
+jal printBits 
 
 la $a0, endString
-addi $v0, $zero, 4 #syscall for print string
+addi $v0, $zero, 4 
 syscall
 
 lw $a0, 0($sp)
 addi $sp, $sp, 4 #restore stack and a0
 
-addi $s1, $s1, -1 #count goes down
+addi $s1, $s1, -1 #decrease count
 beq $s1, $zero, finished
 j loop
 
 
 #A shift
 oneShift:
-srl $s0, $s0, 1 #A shift right by one
-or $s0, $s0, 2147483648 #make last bit a one to follow shift right
+srl $s0, $s0, 1 #A shifts right by one
+or $s0, $s0, 2147483648 #make one as the last bit to follow shift right
 j shiftQ
 
 #QShift
 shiftOne: 
-or $a1, $a1, 2147483648  #add 1 in the last bit of q
+or $a1, $a1, 2147483648  #add 1 in qs last bit
 
 #print bits
 
 addi $sp, $sp, -4
 sw $a0, 0($sp) #protect stack and store a0
 
-la $a0, spaceString #load string in a0
-addi $v0, $zero, 4 #syscall for print string
+la $a0, spaceString #load spaceString
+addi $v0, $zero, 4 
 syscall
 
-add $a0, $s0, $zero #put A in arugment
+add $a0, $s0, $zero #put A in arg
 jal printBits #call printBits
 
-add $a0, $a1, $zero #put Q in arugment
-jal printBits #call printBits
+add $a0, $a1, $zero #put Q in arg
+jal printBits 
 
 la $a0, endString
-addi $v0, $zero, 4 #syscall for print string
+addi $v0, $zero, 4 
 syscall
 
 lw $a0, 0($sp)
 addi $sp, $sp, 4 #restore stack and a0
 
-addi $s1, $s1, -1 #count goes down
+addi $s1, $s1, -1 #decrease count
 beq $s1, $zero, finished
 j loop
 
@@ -312,7 +311,7 @@ addM:
 add $s0, $s0, $a0 #A <- A + M
 j aritShift
 
-#v0, high register, v1 is low register 
+#v0 as high register, v1 as low register 
 finished: 
 add $v0, $s0, $zero #v0 is high (A)
 add $v1, $a1, $zero #v1 is low (B)
@@ -322,8 +321,8 @@ lw $ra, 0($sp)
 addi $sp, $sp, 4
 jr $ra
 
-#needs a int in a0, then prints bits from int
-#uses t1 through both loops and other temps for either loops
+#a0 is a int, then prints ints bits
+#uses t1 and other temps through both loops 
 
 printBits:
 #protect stack
@@ -334,20 +333,20 @@ sw $t0, 8($sp)
 sw $t1, 12($sp)
 sw $t2, 16($sp)
 
-add $t0, $zero, $zero #sets incrumenter to 0
+add $t0, $zero, $zero #incrementer is now zero
 addi $v0, $zero, 1 #sets syscall value to print int
 
 bitLoop:
-and $t1, $a0, 2147483648 #load last bit of a0
-srl $t1, $t1, 31 #shift bit to first bit 
+and $t1, $a0, 2147483648 #load a0s last bit 
+srl $t1, $t1, 31 #shift the bit to first bit
 add $t2, $a0, $zero #set t2 to a0
-add $a0, $t1, $zero #set a0 to last bit of input
+add $a0, $t1, $zero #set a0 to inputs last bit
 syscall
-add $a0, $t2, $zero #set a0 back to input
-sll $a0, $a0, 1 #shift a0 one bit to the left
-addi $t0, $t0, 1 #incrument t0 by one
-beq $t0, 32, procDone #if 32 bits loaded done with proc
-j bitLoop #if not loop
+add $a0, $t2, $zero #a0 back to input
+sll $a0, $a0, 1 #shifts a0 one bit left
+addi $t0, $t0, 1 #incrument t0
+beq $t0, 32, procDone #if 32 bits loaded,procedure is done
+j bitLoop #if not loop again
 
 procDone:
 #restore stack and return
