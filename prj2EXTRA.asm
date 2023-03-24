@@ -87,6 +87,7 @@ stringIn:
     la $a0, convert #get the array
     addi $a1, $zero, 20
     syscall #get the input
+
     addi $t1, $a0, 0 # move input to t1
 
     addi $t2, $zero, 10 #newline ascii
@@ -149,6 +150,7 @@ booths:
     addi $s2, $a0, 0 #s2 gets a0 which is M multiplicand
     add $s0, $zero, $zero #s0 gets 0 which is A
     add $s1, $a1, $zero #set s1 to Q which is second input a1 multiplier
+    add $t1, $zero, $zero #set q-1 
     
     addi $t4, $zero, 1 #set t4 to 1 for A=A+M
     addi $t5, $zero, 2 #set t5 to 2 for A=A-M
@@ -174,7 +176,7 @@ booths:
     j shiftRight #shift right
 
     shiftRight: #shift right case
-    andi $t0, $s0 1 #gets right most bit in t0
+    andi $t0, $s0, 1 #gets right most bit in t0
     andi $t1, $s1, 1 #gets rightmost bit in t1
 
     sra $s0, $s0, 1 #shift right A s0
