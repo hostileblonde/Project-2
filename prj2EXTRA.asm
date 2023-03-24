@@ -1,5 +1,5 @@
 #Group #6 
-#Group Eli Shelton, Bradyn Combs, Kaitlin Colvin
+#Group Eli Shelton, Bradyn Combs, Kaitlin Colvin 
 # Project 2 booths alg
 .data
 convert: .space 20 #convert array
